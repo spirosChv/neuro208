@@ -1,17 +1,12 @@
+TITLE Na+, K+ channels and leak
+
 COMMENT
-All the channels are taken from same good old classic articles.
-The arrengment was done after:
-Kang, S., Kitano, K., and Fukai, T. (2004). 
-  Self-organized two-state membrane potential 
-  transitions in a network of realistically modeled 
-  cortical neurons. Neural Netw 17, 307-312.
+All the channels are taken from same good old classic articles. The arrengment was done after:
+Kang, S., Kitano, K., and Fukai, T. (2004). Self-organized two-state membrane potential transitions in a network of realistically modeled cortical neurons. Neural Netw 17, 307-312.
 
-Whenever available I used the same parameters they used,
-except in n gate:
+Whenever available I used the same parameters they used, except in n gate:
   n' = phi*(ninf-n)/ntau
-
-Kang used phi = 12
-I used phi = 1
+Kang used phi = 12, I used phi = 1
 
 Written by Albert Gidon & Leora Menhaim (2004).
 ENDCOMMENT
@@ -66,13 +61,12 @@ ASSIGNED {
 
 BREAKPOINT {
     SOLVE states METHOD cnexp 
-    :-------------------------
     :Traub et. al. 1991
     iNa = gnabar*pow(m, 2)*h*(v - eNa)
     iK = gkbar*n*(v - eK)
-    :-------------------------
+    :leak current
     il = gl*(v - el)
-    :-------------------------
+    : total current
     i = il + iK + iNa
 }
 
@@ -85,7 +79,6 @@ INITIAL {
 
 DERIVATIVE states {  
     rates(v)
-    :Traub Spiking channels
     m' = (minf-m)/mtau
     h' = (hinf-h)/htau
     n' = phi*(ninf-n)/ntau
@@ -108,13 +101,12 @@ FUNCTION vtrap(x (mV), y (mV)) (1) {
     }
 }
 
-PROCEDURE rates(v(mV)) {  
+PROCEDURE rates(v (mV)) {  
   :Computes rate and other constants at current v.
   :Call once from HOC to initialize inf at resting v.
-  LOCAL  alpha, beta, vt, qt
-  : see Resources/The unreliable Q10.htm for details
+  LOCAL alpha, beta, vt, qt
   : remember that not only Q10 is temprature dependent 
-  : and just astimated here, but also the calculation of
+  : and just estimated here, but also the calculation of
   : Q is itself acurate only in about 10% in this range of
   : temperatures. the transformation formulation is:
   : Q = Q10^(( new(degC) - from_original_experiment(degC) )/ 10)
